@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// implenment AI-model to check on foot profiel
+// implement AI-model to check on foot profile
 //Front end design
 //FIXME: logic implement into frontend
 
