@@ -35,8 +35,14 @@ dependencies:
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   ##**Note added bluetooth module
-  flutter_blue_plus: 1.35.5
-  provider: 6.1.5
+  flutter_blue_plus: ^1.35.5
+  ##**Note added DI module
+  provider: ^6.1.5
+  ##**Note added requests module
+  http: ^0.13.6
+  ##**Note added nullsafety module
+  collection: ^1.19.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
