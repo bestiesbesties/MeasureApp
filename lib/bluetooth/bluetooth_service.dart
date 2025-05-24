@@ -1,34 +1,40 @@
 // ignore_for_file: avoid_print
 
-import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
-import 'package:http/http.dart';
-import 'bluetooth_device.dart';
-import 'dart:convert';
 import 'package:collection/collection.dart';
 
-class BluetoothViewModel extends ChangeNotifier {
+class BluetoothServiceApp extends ChangeNotifier{
+  final Map<String, String> labels = {
+    "0": "correct posture",
+    "1": "inbalance left",
+    "2": "inbalance right",
+    "3": "on toes",
+    "4": "wrong foot position",
+  };
+
   final int _seconds = 5;
 
-  Duration get duration => Duration(seconds: this._seconds);
+  Duration get duration => Duration(seconds:_seconds);
 
   final List<ScanResult> _scanResults = [];
 
   List<ScanResult> get scanResults => _scanResults;
 
-  String XdynamicLabel = "";
-  BluetoothDevice? XspecificDevice;
-  BluetoothService? _specificService;
-  BluetoothCharacteristic? _writeCharacteristic;
-  BluetoothCharacteristic? _notifyCharacteristic;
+  String dynamicLabel = "";
+  BluetoothDevice? specificDevice;
+  BluetoothService? specificService;
+  BluetoothCharacteristic? writeCharacteristic;
+  BluetoothCharacteristic? notifyCharacteristic;
 
-  final String _specificAdvname = "MeasureMates";
+  // final String _specificAdvname = "MeasureMates";
+  final String _specificAdvname = "DZ Meetmat";
   final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
   final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
   final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
 
   Future<void> mainConnector() async {
+
     await FlutterBluePlus.adapterState.firstWhere((state) =>
     state == BluetoothAdapterState.on);
 
@@ -54,12 +60,12 @@ class BluetoothViewModel extends ChangeNotifier {
             writeToDevice("START");
 
             print("\t\t\t\tmainConnector:- Should try to open listeners");
-            await _notifyCharacteristic!.setNotifyValue(true);
-            _notifyCharacteristic!.onValueReceived.listen((value) {
+            await notifyCharacteristic!.setNotifyValue(true);
+            notifyCharacteristic!.onValueReceived.listen((value) {
               try {
                 final valueList = decimalChanger(value);
 
-                print("${valueList[0]} ${valueList[1]} $XdynamicLabel");
+                print("${valueList[0]} ${valueList[1]} $dynamicLabel");
               } catch (e) {
                 print("\t\t\t\tBluetoothViewModel: Skipped expression: $e");
               }
@@ -101,7 +107,7 @@ class BluetoothViewModel extends ChangeNotifier {
       );
 
       if (activeScanResult != null) {
-        XspecificDevice = activeScanResult.device;
+        specificDevice = activeScanResult.device;
         notifyListeners();
         activeCondition = true;
         FlutterBluePlus.stopScan();
@@ -111,21 +117,21 @@ class BluetoothViewModel extends ChangeNotifier {
       }
       return activeCondition;
     } catch (e) {
-      print("\t\t\t\tBluetoothViewModel: Error in lookForSpecificAdvname: ${e}");
+      print("\t\t\t\tBluetoothViewModel: Error in lookForSpecificAdvname: $e");
       return false;
     }
   }
 
   Future<bool> connectToSpecificDevice() async {
     try {
-      final device = XspecificDevice;
+      final device = specificDevice;
       if (device == null) {
         print(
             "\t\t\t\tBluetoothViewModel: Did not try connecting because no specific device is set");
         return false;
       }
 
-      print("\t\t\t\tBluetoothViewModel: Trying to connect to: ${XspecificDevice}");
+      print("\t\t\t\tBluetoothViewModel: Trying to connect to: $specificDevice");
       await device.connect(timeout: duration);
       device.connectionState.listen((event) {
         if (event == BluetoothConnectionState.connected) {
@@ -139,14 +145,14 @@ class BluetoothViewModel extends ChangeNotifier {
       });
       return true;
     } catch (e) {
-      print("\t\t\t\tBluetoothViewModel: Error in connectToSpecificDevice: ${e}");
+      print("\t\t\t\tBluetoothViewModel: Error in connectToSpecificDevice: $e");
       return false;
     }
   }
 
   Future<bool> findSpecificService() async {
     try {
-      final device = XspecificDevice;
+      final device = specificDevice;
       if (device == null) {
         print("\t\t\t\tBluetoothViewModel: No specific device is set");
         return false;
@@ -159,17 +165,17 @@ class BluetoothViewModel extends ChangeNotifier {
         print("\t\t\t\tBluetoothViewModel: Specific service not found");
         return false;
       }
-      _specificService = activeService;
+      specificService = activeService;
       return true;
     } catch (e) {
-      print("\t\t\t\tBluetoothViewModel: Error in findSpecificService: ${e}");
+      print("\t\t\t\tBluetoothViewModel: Error in findSpecificService: $e");
       return false;
     }
   }
 
   Future<bool> findWriteCharacteristic() async {
     try {
-      final service = _specificService;
+      final service = specificService;
       if (service == null) {
         print("\t\t\t\tBluetoothViewModel: No specific service is set");
         return false;
@@ -185,17 +191,17 @@ class BluetoothViewModel extends ChangeNotifier {
         print("\t\t\t\tBluetoothViewModel: Characteristic not found");
         return false;
       }
-      _writeCharacteristic = activeCharacteristic;
+      writeCharacteristic = activeCharacteristic;
       return true;
     } catch (e) {
-      print("\t\t\t\tBluetoothViewModel: Error in findWriteCharacteristic: ${e}");
+      print("\t\t\t\tBluetoothViewModel: Error in findWriteCharacteristic: $e");
       return false;
     }
   }
 
   Future<bool> findNotifyCharacteristic() async {
     try {
-      final service = _specificService;
+      final service = specificService;
       if (service == null) {
         print("\t\t\t\tBluetoothViewModel: No specific service is set");
         return false;
@@ -210,10 +216,10 @@ class BluetoothViewModel extends ChangeNotifier {
         print("\t\t\t\tBluetoothViewModel: Characteristic not found");
         return false;
       }
-      _notifyCharacteristic = activeCharacteristic;
+      notifyCharacteristic = activeCharacteristic;
       return true;
     } catch (e) {
-      print("\t\t\t\tBluetoothViewModel: Error in findNotifyCharacteristic: ${e}");
+      print("\t\t\t\tBluetoothViewModel: Error in findNotifyCharacteristic: $e");
       return false;
     }
   }
@@ -221,7 +227,7 @@ class BluetoothViewModel extends ChangeNotifier {
   Future<void> writeToDevice(String text) async{
     List<int> textBytes = text.codeUnits;
     print("\t\t\t\tBluetoothViewModel: Sending data to characteristic: $textBytes");
-    await _writeCharacteristic!.write(textBytes, withoutResponse: false);
+    await writeCharacteristic!.write(textBytes, withoutResponse: false);
   }
 
 
@@ -241,6 +247,5 @@ class BluetoothViewModel extends ChangeNotifier {
     return [foot, values];
   }
 }
-
 
 

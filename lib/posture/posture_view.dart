@@ -1,22 +1,7 @@
 import 'package:flutter/material.dart';
 
-// implement AI-model to check on foot profile
-//Front end design
-//FIXME: logic implement into frontend
-
-class PostureCheckPage extends StatefulWidget {
-  const PostureCheckPage({super.key});
-
-  @override
-  _PostureCheckPageState createState() => _PostureCheckPageState();
-}
-
-class _PostureCheckPageState extends State<PostureCheckPage> {
-  // if foot too much pressure on the front
-  // if foot too much pressure on the back
-  // if foot too much pressure on the left
-  // if foot too much pressure on the right
-  // if foot too much pressure on the middle
+class PostureView extends StatelessWidget {
+  const PostureView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +43,3 @@ class _PostureCheckPageState extends State<PostureCheckPage> {
     );
   }
 }
-
-
-
-
-// visueel as feedback of profiel
-// text as foodback

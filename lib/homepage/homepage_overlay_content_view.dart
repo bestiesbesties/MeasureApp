@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 
-class TutorialBefore extends StatefulWidget {
-  const TutorialBefore({super.key});
+class HomepageOverlayContentState extends StatefulWidget {
+  const HomepageOverlayContentState({super.key});
 
   @override
-  State<TutorialBefore> createState() => _PageViewExampleState();
+  State<HomepageOverlayContentState> createState() => _PageViewExampleState();
 }
 
-class _PageViewExampleState extends State<TutorialBefore>
+class _PageViewExampleState extends State<HomepageOverlayContentState>
     with TickerProviderStateMixin {
   late PageController _pageViewController;
   late TabController _tabController;
@@ -38,7 +38,7 @@ class _PageViewExampleState extends State<TutorialBefore>
         PageView(
           controller: _pageViewController,
           onPageChanged: _handlePageViewChanged,
-          children: <Widget>[
+          children: [
             Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -52,7 +52,7 @@ class _PageViewExampleState extends State<TutorialBefore>
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      'Zet de meetmat tegen aan de muur',
+                      'Zet de meetmat tegen de muur.',
                       style: textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -73,7 +73,7 @@ class _PageViewExampleState extends State<TutorialBefore>
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      'Geen schoenen aan tijdens de meting',
+                      'Trek je schoenen en sokken uit.',
                       style: textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -94,7 +94,7 @@ class _PageViewExampleState extends State<TutorialBefore>
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      'Zet de <heml> op de hoofd',
+                      'Zet de plank recht op je hoofd.',
                       style: textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),
@@ -115,7 +115,7 @@ class _PageViewExampleState extends State<TutorialBefore>
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
-                      'Staan op de meetmat volgens de instructies',
+                      'Ga staan op de meetmat.',
                       style: textTheme.titleLarge,
                       textAlign: TextAlign.center,
                     ),

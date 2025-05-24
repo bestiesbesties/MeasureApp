@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 class RoundButton extends StatefulWidget {
   final String name;
-  final VoidCallback onPresse;
+  final VoidCallback onPressed;
   final Color? color;
 
-  RoundButton({required this.name, required this.onPresse, this.color});
+  RoundButton({required this.name, required this.onPressed, this.color});
 
   @override
   _RoundButtonState createState() => _RoundButtonState();
@@ -33,7 +33,7 @@ class _RoundButtonState extends State<RoundButton> {
     setState(() {
       _currentColor = _defaultColor;
     });
-    widget.onPresse();
+    widget.onPressed();
   }
 
   void _handleTapCancel() {
