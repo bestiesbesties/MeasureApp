@@ -43,8 +43,8 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network(
-                    'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                  Image.asset(
+                    "assets/images/no-icon.png",
                     width: 100,
                     height: 100,
                   ),
@@ -64,8 +64,8 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network(
-                    'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                  Image.asset(
+                    "assets/images/no-icon.png",
                     width: 100,
                     height: 100,
                   ),
@@ -85,8 +85,8 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network(
-                    'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                  Image.asset(
+                    "assets/images/no-icon.png",
                     width: 100,
                     height: 100,
                   ),
@@ -106,8 +106,8 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network(
-                    'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                  Image.asset(
+                    "assets/images/no-icon.png",
                     width: 100,
                     height: 100,
                   ),
@@ -127,8 +127,8 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Image.network(
-                    'https://developers.elementor.com/docs/assets/img/elementor-placeholder-image.png',
+                  Image.asset(
+                    "assets/images/no-icon.png",
                     width: 100,
                     height: 100,
                   ),
