@@ -27,7 +27,7 @@ class WebserverView extends StatelessWidget {
                 maxHeight: MediaQuery.of(context).size.height * 0.4,
               ),
               decoration: BoxDecoration(
-                color: Color(0xFFE2E6EF),
+                color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Padding(
