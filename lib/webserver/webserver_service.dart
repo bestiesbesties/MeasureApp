@@ -35,7 +35,7 @@ class WebserverService extends ChangeNotifier{
 
       }
     } catch (e) {
-      print("Error in checkStatus:$e");
+      print("WebserverService: Error in checkStatus:$e");
       return "";
     }
 
