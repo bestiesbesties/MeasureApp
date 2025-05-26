@@ -16,52 +16,81 @@ class LabelViewModel extends ChangeNotifier {
   BluetoothDevice? get connectedDevice => bluetoothServiceApp.specificDevice;
   String dynamicTarget = "";
   List<List<dynamic>> buffer = [];
+  int listenerLength = 0;
 
   void setListener() async {
+
+    // print("\t\t\t\tLabelViewModel: Sending start");
+    // writeToDevice("CONNECTED");
+    // writeToDevice("START");
+
     print("\t\t\t\tLabelViewModel: Opening listener");
-    await bluetoothServiceApp.notifyCharacteristic!.setNotifyValue(true);
-    bluetoothServiceApp.notifyCharacteristic!.onValueReceived.listen((value) {
-      print("\t\t\t\tLabelViewModel: Recieved a value");
-      try {
-        final valueList = bluetoothServiceApp.decimalChanger(value);
-        buffer.add(valueList[1]);
-        print("\t\t\t\tLabelViewModel: Buffered foot: ${valueList[0]}");
-        if (buffer.length == 2) {
-          final flatList = buffer.expand((x) => x).toList();
-          print("\t\t\t\tLabelViewModel: sending flattend buffer");
-          webserverService.sendData(values: flatList, target: dynamicTarget);
-          buffer.clear();
-        }
+    if (bluetoothServiceApp.notifyCharacteristic != null) {
+      await bluetoothServiceApp.notifyCharacteristic!.setNotifyValue(true);
+      bluetoothServiceApp.notifyCharacteristicSubscribtion=  bluetoothServiceApp.notifyCharacteristic!.onValueReceived.listen((value) {
+        print("\t\t\t\tLabelViewModel: Recieved a value (amt): $listenerLength");
+        // listenerLength++;
+        // if (listenerLength > 2) {
+          try {
+            final valueList = bluetoothServiceApp.decimalChanger(value);
+            buffer.add(valueList[1]);
+            print("\t\t\t\tLabelViewModel: Buffered foot: ${valueList[0]}");
+            if (buffer.length == 2) {
+              final flatList = buffer.expand((x) => x).toList();
+              print("\t\t\t\tLabelViewModel: sending flattend buffer");
+              webserverService.sendData(values: flatList, target: dynamicTarget);
+              buffer.clear();
+            }
 
-        // print("${valueList[0]} ${valueList[1]} $dynamicLabel");
-      } catch (e) {
-        print("\t\t\t\tLabelViewModel: Error at setListener: $e");
-      }
-      // writeToDevice("APPROVED");
-      // writeToDevice("DISAPPROVED");
-      // print("\t\t\t\mainConnecter:- Requested new block");
-    });
+            // print("${valueList[0]} ${valueList[1]} $dynamicLabel");
+          } catch (e) {
+            print("\t\t\t\tLabelViewModel: Error at setListener: $e");
+          }
+          // writeToDevice("APPROVED");
+          // writeToDevice("DISAPPROVED");
+          // print("\t\t\t\mainConnecter:- Requested new block");
+        // }
+
+
+      });
+    } else {
+      print("\t\t\t\tLabelViewModel: Error while opening listener: No global notifyCharacteristic");
+    }
+
+  // }
+
+  // void writeToDevice(String text) async {
+  //   try {
+  //     List<int> textBytes = text.codeUnits;
+  //     print("\t\t\t\tLabelViewModel: Sending data to characteristic: $textBytes");
+  //     await bluetoothServiceApp.writeCharacteristic!.write(textBytes, withoutResponse: false);
+  //   } catch (e) {
+  //     print("\t\t\t\tLabelViewModel: Error at writeToDevice: $e");
+  //   }
+
   }
 
-  void writeToDevice(String text) async {
-    List<int> textBytes = text.codeUnits;
-    print("\t\t\t\tLabelViewModel: Sending data to characteristic: $textBytes");
-    await bluetoothServiceApp.writeCharacteristic!.write(textBytes, withoutResponse: false);
+  void disposeListener() {
+    try {
+      print("LabelViewModel: Cancelling listener");
+      bluetoothServiceApp.notifyCharacteristicSubscribtion!.cancel();
+      bluetoothServiceApp.notifyCharacteristicSubscribtion = null;
+    } catch (e) {
+      print("\t\t\t\tLabelViewModel: Error at disposeListener: $e");
+    }
   }
-
 }
 
 class LabelView extends StatelessWidget {
   const LabelView({super.key});
   @override
   Widget build(BuildContext context) {
-    // print("BluetoothView: Reload current context");
     final Map<String, String> labels = {
-      "0": "Correct posture",
-      "1": "Inbalance left",
-      "2": "Inbalance right",
-      "3": "On toes",
-      "4": "Wrong foot position",
+      "0": "correct_posture",
+      "1": "inbalance_left",
+      "2": "inbalance_right",
+      "3": "on_toes",
+      "4": "wrong_foot_position",
     };
     final viewModel = Provider.of<LabelViewModel>(context);
     viewModel.setListener();
@@ -71,11 +100,7 @@ class LabelView extends StatelessWidget {
         child: Column(
           children: [
             const SizedBox(height: 60),
-            if (viewModel.connectedDevice != null)
-              Text(viewModel.connectedDevice!.advName),
-            if (viewModel.connectedDevice == null)
-              Text("no device"),
-
+            Text(viewModel.connectedDevice?.advName.toString() ?? "No devide connected"),
             Container (
               padding: const EdgeInsets.only(top: 30.0, bottom: 30.0),
               child: Row(
@@ -87,7 +112,7 @@ class LabelView extends StatelessWidget {
                       onPressed: () {
                         print("BluetoothView: Pressed: reset");
                         viewModel.dynamicTarget = "";
-                        viewModel.writeToDevice("DISAPPROVED");
+                        viewModel.bluetoothServiceApp.writeToDevice("DISAPPROVED");
                       },
                       child: Text("Lege meting"),
                     ),
@@ -105,7 +130,7 @@ class LabelView extends StatelessWidget {
                       onPressed: () {
                         print("BluetoothView: Pressed: ${entry.value}");
                         viewModel.dynamicTarget = entry.value;
-                        viewModel.writeToDevice("DISAPPROVED");
+                        viewModel.bluetoothServiceApp.writeToDevice("DISAPPROVED");
                       },
                       child: Text(entry.value),
                     ),

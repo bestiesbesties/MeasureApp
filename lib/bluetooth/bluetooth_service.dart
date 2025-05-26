@@ -1,5 +1,7 @@
 // ignore_for_file: avoid_print
 
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:collection/collection.dart';
@@ -26,12 +28,13 @@ class BluetoothServiceApp extends ChangeNotifier{
   BluetoothService? specificService;
   BluetoothCharacteristic? writeCharacteristic;
   BluetoothCharacteristic? notifyCharacteristic;
+  StreamSubscription<List<int>>? notifyCharacteristicSubscribtion;
 
   final String _specificAdvname = "MeasureMates";
   final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
   final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
   final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
-
+  //
   // final String _specificAdvname = "DZ Meetmat";
   // final String _specificServiceID = "1818";
   // final String _specificCharacteristicNotifyID = "2A63";
@@ -60,8 +63,8 @@ class BluetoothServiceApp extends ChangeNotifier{
               "\t\t\t\tmainConnector:- readFound: $readFound, notifyFound: $notifyFound");
 
           if (readFound && notifyFound) {
-            // writeToDevice("CONNECTED");
-            // writeToDevice("START");
+            writeToDevice("CONNECTED");
+            writeToDevice("START");
 
             print("\t\t\t\tmainConnector:- Ready, should try to open listeners");
             // await notifyCharacteristic!.setNotifyValue(true);
@@ -228,11 +231,11 @@ class BluetoothServiceApp extends ChangeNotifier{
     }
   }
 
-  // Future<void> writeToDevice(String text) async{
-  //   List<int> textBytes = text.codeUnits;
-  //   print("\t\t\t\tBluetoothViewModel: Sending data to characteristic: $textBytes");
-  //   await writeCharacteristic!.write(textBytes, withoutResponse: false);
-  // }
+  Future<void> writeToDevice(String text) async{
+    List<int> textBytes = text.codeUnits;
+    print("\t\t\t\tBluetoothViewModel: Sending data to characteristic: $textBytes");
+    await writeCharacteristic!.write(textBytes, withoutResponse: false);
+  }
 
 
   List<dynamic> decimalChanger(List<int> value) {
