@@ -27,11 +27,15 @@ class BluetoothServiceApp extends ChangeNotifier{
   BluetoothCharacteristic? writeCharacteristic;
   BluetoothCharacteristic? notifyCharacteristic;
 
-  // final String _specificAdvname = "MeasureMates";
-  final String _specificAdvname = "DZ Meetmat";
+  final String _specificAdvname = "MeasureMates";
   final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
   final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
   final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+
+  // final String _specificAdvname = "DZ Meetmat";
+  // final String _specificServiceID = "1818";
+  // final String _specificCharacteristicNotifyID = "2A63";
+  // final String _specificCharacteristicWriteID = "2A66";
 
   Future<void> mainConnector() async {
 
@@ -56,23 +60,23 @@ class BluetoothServiceApp extends ChangeNotifier{
               "\t\t\t\tmainConnector:- readFound: $readFound, notifyFound: $notifyFound");
 
           if (readFound && notifyFound) {
-            writeToDevice("CONNECTED");
-            writeToDevice("START");
+            // writeToDevice("CONNECTED");
+            // writeToDevice("START");
 
-            print("\t\t\t\tmainConnector:- Should try to open listeners");
-            await notifyCharacteristic!.setNotifyValue(true);
-            notifyCharacteristic!.onValueReceived.listen((value) {
-              try {
-                final valueList = decimalChanger(value);
-
-                print("${valueList[0]} ${valueList[1]} $dynamicLabel");
-              } catch (e) {
-                print("\t\t\t\tBluetoothViewModel: Skipped expression: $e");
-              }
-              // writeToDevice("APPROVED");
-              // writeToDevice("DISAPPROVED");
-              // print("\t\t\t\mainConnecter:- Requested new block");
-            });
+            print("\t\t\t\tmainConnector:- Ready, should try to open listeners");
+            // await notifyCharacteristic!.setNotifyValue(true);
+            // notifyCharacteristic!.onValueReceived.listen((value) {
+            //   try {
+            //     final valueList = decimalChanger(value);
+            //
+            //     print("${valueList[0]} ${valueList[1]} $dynamicLabel");
+            //   } catch (e) {
+            //     print("\t\t\t\tBluetoothViewModel: Skipped expression: $e");
+            //   }
+            //   // writeToDevice("APPROVED");
+            //   // writeToDevice("DISAPPROVED");
+            //   // print("\t\t\t\mainConnecter:- Requested new block");
+            // });
 
           } else {
             print("\t\t\t\tmainConnector: a characteristic not found");
@@ -224,11 +228,11 @@ class BluetoothServiceApp extends ChangeNotifier{
     }
   }
 
-  Future<void> writeToDevice(String text) async{
-    List<int> textBytes = text.codeUnits;
-    print("\t\t\t\tBluetoothViewModel: Sending data to characteristic: $textBytes");
-    await writeCharacteristic!.write(textBytes, withoutResponse: false);
-  }
+  // Future<void> writeToDevice(String text) async{
+  //   List<int> textBytes = text.codeUnits;
+  //   print("\t\t\t\tBluetoothViewModel: Sending data to characteristic: $textBytes");
+  //   await writeCharacteristic!.write(textBytes, withoutResponse: false);
+  // }
 
 
   List<dynamic> decimalChanger(List<int> value) {

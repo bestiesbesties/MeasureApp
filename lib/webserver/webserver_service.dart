@@ -16,13 +16,14 @@ class WebserverService extends ChangeNotifier{
   bool isConnected = false;
   Map<String, dynamic>? lastKnownStatus;
 
-  Future<String> sendData({required List<double> values}) async {
+  Future<String> sendData({required List<dynamic> values, required String target}) async {
   try {
       final response = await post(
         Uri.parse(webserverUriString),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
-          'values': values
+          "values": values,
+          "target" : target
         }),
       );
       if (response.statusCode == 201) { // HTTP 201 (Created)
