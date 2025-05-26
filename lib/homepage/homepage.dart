@@ -61,7 +61,7 @@ class HomepageView extends StatelessWidget {
                                     builder: (context) => ChangeNotifierProvider(
                                       create: (_) => BluetoothViewModel(
                                           bluetoothServiceApp: Provider.of<BluetoothServiceApp>(context, listen: true)),
-                                      child: PostureView(),
+                                      child: PostureView(initialPostureId: "4"), // FIXME: replace with actual initial data from Bluetooth
                                     ),
                                   ),
                                 );
