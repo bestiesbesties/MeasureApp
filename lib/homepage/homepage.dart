@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:wonder/bluetooth/bluetooth_service.dart';
+import 'package:wonder/label/label_view.dart';
 import 'package:wonder/round_button.dart';
 import 'package:provider/provider.dart';
 import 'package:wonder/posture/posture_view.dart';
@@ -61,6 +62,29 @@ class HomepageView extends StatelessWidget {
                                       create: (_) => BluetoothViewModel(
                                           bluetoothServiceApp: Provider.of<BluetoothServiceApp>(context, listen: true)),
                                       child: PostureView(),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            RoundButton(
+                              name: "Verzamel data",
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ChangeNotifierProvider(
+                                      create: (_) => LabelViewModel(
+                                          bluetoothServiceApp: Provider.of<BluetoothServiceApp>(context, listen: true),
+                                          webserverService: Provider.of<WebserverService>(context, listen: true)
+                                      ),
+                                      child: LabelView(),
                                     ),
                                   ),
                                 );
