@@ -58,6 +58,7 @@ class PostureView extends StatelessWidget {
     // }
 
 
+    // Precache all images before showing the posture screen
     return FutureBuilder(
       future: _precacheAllImages(context),
       builder: (context, snapshot) {
@@ -126,11 +127,11 @@ class _PostureScreen extends StatelessWidget {
                 "Stabiel voor: ${viewModel.countdown}s",
                 style: Theme.of(context).textTheme.titleMedium,
               ),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Go back!'),
-            ),
+            // const SizedBox(height: 30),
+            // ElevatedButton(
+            //   onPressed: () => Navigator.pop(context),
+            //   child: const Text('Go back!'),
+            // ),
           ],
         ),
       ),
