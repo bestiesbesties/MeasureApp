@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:wonder/bluetooth/bluetooth_service.dart';
+import 'package:wonder/bluetooth/bluetooth_view.dart';
+import 'package:wonder/measure/measure_view.dart';
 import 'package:wonder/posture/posture_viewmodel.dart';
+import 'package:wonder/bluetooth/bluetooth_viewmodel.dart';
+import 'package:wonder/round_button.dart';
+
+
 
 class PostureView extends StatelessWidget {
   final String initialPostureId;
@@ -9,12 +16,61 @@ class PostureView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    //FIXME: uncomment this when you want to use bluetooth connection
+    // final bluetooth = Provider.of<BluetoothViewModel>(context);
+    // if (bluetooth.connectionState == "Failed"||bluetooth.connectionState == "Disconnected") {
+    //   return Scaffold(
+    //     body: Center(
+    //       child: Column(
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         children: [
+    //           Text("Geen verbinding met maat."),
+    //           Row(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               RoundButton(
+    //                 name: "Maak verbinding",
+    //                 onPressed: () {
+    //                   Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                       builder:
+    //                           (context) => ChangeNotifierProvider(
+    //                         create:
+    //                             (_) => BluetoothViewModel(
+    //                           bluetoothServiceApp:
+    //                           Provider.of<
+    //                               BluetoothServiceApp
+    //                           >(context, listen: true),
+    //                         ),
+    //                         child: BluetoothView(),
+    //                       ),
+    //                     ),
+    //                   );
+    //                 },
+    //               ),
+    //             ],
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // }
+
+
     return FutureBuilder(
       future: _precacheAllImages(context),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           return ChangeNotifierProvider(
-            create: (_) => PostureViewModel(initialPostureId),
+            create: (_) => PostureViewModel(
+              initialPostureId,// get posture data
+              onStablePostureCallback: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const MeasureView()),
+                );
+              },
+            ),
             child: const _PostureScreen(),
           );
         } else {
@@ -33,7 +89,7 @@ class PostureView extends StatelessWidget {
       "assets/images/feet-icon-wrong-right.png",
       "assets/images/feet-icon-wrong-toes.png",
       "assets/images/feet-icon-wrong-all.png",
-      "assets/images/default.png",
+      "assets/images/feet-icon-default.png",
     ];
 
     for (final path in imagePaths) {
@@ -57,6 +113,7 @@ class _PostureScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+
             Image.asset(viewModel.imagePath, width: imageSize, height: imageSize),
             const SizedBox(height: 30),
             Text(

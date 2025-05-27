@@ -5,19 +5,24 @@ class PostureViewModel extends ChangeNotifier {
   String _postureId;
   String get postureId => _postureId;
 
+  final void Function()? onStablePostureCallback; // <-- callback
+  PostureViewModel(this._postureId, {this.onStablePostureCallback}) {
+    simulatePostureChanges(); // Only during development
+  }
+
   final Map<String, List<String>> postureResponse = {
     "0": ["Je staat goed!", "assets/images/feet-icon-correct.png"],
     "1": [
-      "Je staat te veel in balans naar links",
+      "Balans teveel naar links",
       "assets/images/feet-icon-wrong-left.png",
     ],
     "2": [
-      "Je staat te veel in balans naar rechts",
+      "Balans teveel naar rechts",
       "assets/images/feet-icon-wrong-right.png",
     ],
-    "3": ["Je staat op de tenen", "assets/images/feet-icon-wrong-toes.png"],
+    "3": ["Niet op tenen", "assets/images/feet-icon-wrong-toes.png"],
     "4": [
-      "Je staat op verkeerde voetpositie",
+      "Verkeerde voetpositie",
       "assets/images/feet-icon-wrong-all.png",
     ],
   };
@@ -29,10 +34,7 @@ class PostureViewModel extends ChangeNotifier {
   bool _isCountingDown = false;
   bool get isCountingDown => _isCountingDown;
 
-  PostureViewModel(this._postureId) {
-    simulatePostureChanges();
-  }
-
+  //start or cancel countdown if posture has been changed
   void updatePosture(String newPostureId) {
     if (_postureId == newPostureId) return;
 
@@ -46,6 +48,7 @@ class PostureViewModel extends ChangeNotifier {
     }
   }
 
+  //Start countdown
   void _startCountdown() {
     _cancelCountdown();
     _isCountingDown = true;
@@ -70,6 +73,7 @@ class PostureViewModel extends ChangeNotifier {
     });
   }
 
+  //Cancel countdown
   void _cancelCountdown() {
     _stabilityTimer?.cancel();
     if (_isCountingDown) {
@@ -80,12 +84,16 @@ class PostureViewModel extends ChangeNotifier {
 
   void onStablePostureDetected() {
     // TODO: Implement what should happen when posture is stable for 3 seconds
-    debugPrint("Stable posture detected for 3 seconds!");
+    // debugPrint("Stable posture detected for 3 seconds!");
+    // load to measure page let know that length and weight will be measured
+
+    onStablePostureCallback?.call();
   }
+
 
   String get message => postureResponse[_postureId]?[0] ?? "Onbekende houding";
   String get imagePath =>
-      postureResponse[_postureId]?[1] ?? "assets/images/default.png";
+      postureResponse[_postureId]?[1] ?? "assets/images/feet-icon-default.png";
 
   @override
   void dispose() {
@@ -94,21 +102,22 @@ class PostureViewModel extends ChangeNotifier {
   }
   
 
+  // Simulate posture changes for development purposes
   void simulatePostureChanges() {
-    Future.delayed(const Duration(seconds: 2), () {
-      updatePosture("0");
+    Future.delayed(const Duration(seconds: 1), () {
+      updatePosture("4");
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       updatePosture("1"); //links
     });
 
-    Future.delayed(const Duration(seconds: 2), () {
-      updatePosture("0");
+    Future.delayed(const Duration(seconds: 3), () {
+      updatePosture("2");
     });
 
     Future.delayed(const Duration(seconds: 2), () {
-      updatePosture("2");//links
+      updatePosture("3");//links
     });
 
     Future.delayed(const Duration(seconds: 4), () {
