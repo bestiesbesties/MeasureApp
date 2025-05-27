@@ -54,7 +54,7 @@ class WebserverView extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 CircularProgressIndicator(
-                                  strokeWidth: 8.0,
+                                  strokeWidth: 6.0,
                                   backgroundColor: Colors.grey[300],
                                   valueColor: AlwaysStoppedAnimation<Color>(
                                     const Color(0xFF5382DE),

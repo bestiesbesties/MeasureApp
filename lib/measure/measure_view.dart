@@ -14,12 +14,6 @@ class MeasureAwait extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(
-          "assets/images/feet-icon-default.png",
-          width: 200,
-          height: 200,
-        ),
-        const SizedBox(height: 30),
         Text(
           "Blijf even staan, de meting wordt uitgevoerd",
           textAlign: TextAlign.center,
@@ -59,12 +53,6 @@ class MeasureSend extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(
-          "assets/images/feet-icon-default.png",
-          width: 200,
-          height: 200,
-        ),
-        const SizedBox(height: 30),
         Text(
           "Dit zijn de resultaten van de meting",
           textAlign: TextAlign.center,
@@ -107,46 +95,51 @@ class _MeasureViewState extends State<MeasureView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            !measureDone ? MeasureAwait() : MeasureSend(),
-            const SizedBox(height: 10),
-
-            RoundButton(
-              name: "Terug naar home",
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => ChangeNotifierProvider(
-                          create:
-                              (_) => BluetoothViewModel(
-                                bluetoothServiceApp:
-                                    Provider.of<BluetoothServiceApp>(
-                                      context,
-                                      listen: true,
-                                    ),
-                              ),
-                          child: HomepageView(),
-                        ),
-                  ),
-                );
-                ;
-              },
-            ),
-            //FIXME: this button only for simulation purposes
-            RoundButton(
-              name:
-                  measureDone ? "Simulatie reset" : "Simuleer meting voltooid",
-              onPressed: () {
-                toggleMeasureDone();
-              },
-            ),
-          ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              !measureDone ? MeasureAwait() : MeasureSend(),
+              const SizedBox(height: 10),
+              RoundButton(
+                name: "Terug naar home",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ChangeNotifierProvider(
+                            create:
+                                (_) => BluetoothViewModel(
+                                  bluetoothServiceApp:
+                                      Provider.of<BluetoothServiceApp>(
+                                        context,
+                                        listen: true,
+                                      ),
+                                ),
+                            child: HomepageView(),
+                          ),
+                    ),
+                  );
+                },
+              ),
+              //FIXME: this button only for simulation purposes
+              RoundButton(
+                name:
+                    measureDone
+                        ? "Simulatie reset"
+                        : "Simuleer meting voltooid",
+                onPressed: () {
+                  toggleMeasureDone();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

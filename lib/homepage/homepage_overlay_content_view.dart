@@ -150,16 +150,12 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
           tabController: _tabController,
           currentPageIndex: _currentPageIndex,
           onUpdateCurrentPageIndex: _updateCurrentPageIndex,
-          isOnDesktopAndWeb: _isOnDesktopAndWeb,
         ),
       ],
     );
   }
 
   void _handlePageViewChanged(int currentPageIndex) {
-    if (!_isOnDesktopAndWeb) {
-      return;
-    }
     _tabController.index = currentPageIndex;
     setState(() {
       _currentPageIndex = currentPageIndex;
@@ -174,47 +170,21 @@ class _PageViewExampleState extends State<HomepageOverlayContentState>
       curve: Curves.easeInOut,
     );
   }
-
-  bool get _isOnDesktopAndWeb =>
-      kIsWeb ||
-          switch (defaultTargetPlatform) {
-            TargetPlatform.macOS ||
-            TargetPlatform.linux ||
-            TargetPlatform.windows => true,
-            TargetPlatform.android ||
-            TargetPlatform.iOS ||
-            TargetPlatform.fuchsia => false,
-          };
 }
-
-/// Page indicator for desktop and web platforms.
-///
-/// On Desktop and Web, drag gesture for horizontal scrolling in a PageView is disabled by default.
-/// You can defined a custom scroll behavior to activate drag gestures,
-/// see https://docs.flutter.dev/release/breaking-changes/default-scroll-behavior-drag.
-///
-/// In this sample, we use a TabPageSelector to navigate between pages,
-/// in order to build natural behavior similar to other desktop applications.
 class PageIndicator extends StatelessWidget {
   const PageIndicator({
     super.key,
     required this.tabController,
     required this.currentPageIndex,
     required this.onUpdateCurrentPageIndex,
-    required this.isOnDesktopAndWeb,
   });
 
   final int currentPageIndex;
   final TabController tabController;
   final void Function(int) onUpdateCurrentPageIndex;
-  final bool isOnDesktopAndWeb;
 
   @override
   Widget build(BuildContext context) {
-    if (!isOnDesktopAndWeb) {
-      return const SizedBox.shrink();
-    }
-    final ColorScheme colorScheme = Theme.of(context).colorScheme;
 
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -234,8 +204,8 @@ class PageIndicator extends StatelessWidget {
           ),
           TabPageSelector(
             controller: tabController,
-            color: colorScheme.surface,
-            selectedColor: colorScheme.primary,
+            color: Colors.grey[300],
+            selectedColor: Color(0xFF5382DE),
           ),
           IconButton(
             splashRadius: 16.0,
