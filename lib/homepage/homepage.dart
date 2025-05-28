@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:wonder/bluetooth/bluetooth_service.dart';
 import 'package:wonder/label/label_view.dart';
 import 'package:wonder/measure/measure_view.dart';
+import 'package:wonder/posture/posture_viewmodel.dart';
 import 'package:wonder/round_button.dart';
 import 'package:provider/provider.dart';
 import 'package:wonder/posture/posture_view.dart';
@@ -65,14 +66,12 @@ class HomepageView extends StatelessWidget {
                                       builder:
                                           (context) => ChangeNotifierProvider(
                                             create:
-                                                (_) => BluetoothViewModel(
-                                                  bluetoothServiceApp:
-                                                      Provider.of<
-                                                        BluetoothServiceApp
-                                                      >(context, listen: true),
+                                                (_) =>  PostureViewModel(
+                                                    bluetoothServiceApp: Provider.of<BluetoothServiceApp>(context, listen: true),
+                                                    webserverService: Provider.of<WebserverService>(context, listen: true)
                                                 ),
                                             child: PostureView(
-                                              initialPostureId: "2",
+                                              // initialPostureId: "2",
                                             ), // FIXME: replace with actual initial data from Bluetooth
                                           ),
                                     ),
