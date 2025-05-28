@@ -28,92 +28,90 @@ class _PostureViewState extends State<PostureView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<PostureViewModel>(context);
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery
+        .of(context)
+        .size;
     final double imageSize =
         (size.width > size.height ? size.height : size.width) * 0.7;
     //FIXME: uncomment this in deployment to use bluetooth connection
     final bluetoothServiceApp = Provider.of<BluetoothServiceApp>(context);
-    if (false) {
+
+    if (!bluetoothServiceApp.isConnected) {
       return Scaffold(
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("Geen verbinding met mat."),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  RoundButton(
-                    name: "Maak verbinding",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => ChangeNotifierProvider(
-                                create:
-                                    (_) => BluetoothViewModel(
-                                      bluetoothServiceApp:
-                                          Provider.of<BluetoothServiceApp>(
-                                            context,
-                                            listen: true,
-                                          ),
-                                    ),
-                                child: BluetoothView(),
-                              ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+              const Text("Geen verbinding met mat."),
+              const SizedBox(height: 20),
+              RoundButton(
+                name: "Maak verbinding",
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          ChangeNotifierProvider(
+                            create: (_) =>
+                                BluetoothViewModel(
+                                  bluetoothServiceApp: bluetoothServiceApp,
+                                ),
+                            child: const BluetoothView(),
+                          ),
+                    ),
+                  );
+                },
               ),
             ],
           ),
         ),
       );
     }
-
-    Future openDialog() => showDialog(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: const Text("Terug naar menu"),
-            content: const Text(
-              "Weet je zeker dat je terug wilt gaan naar het menu?",
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text("Annuleren"),
-              ),
-              TextButton(
-                onPressed: () {
-                  viewModel.disposeListener();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder:
-                          (context) => ChangeNotifierProvider(
-                            create:
-                                (_) => BluetoothViewModel(
-                                  bluetoothServiceApp:
+    Future openDialog() =>
+        showDialog(
+          context: context,
+          builder:
+              (context) =>
+              AlertDialog(
+                title: const Text("Terug naar menu"),
+                content: const Text(
+                  "Weet je zeker dat je terug wilt gaan naar het menu?",
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Annuleren"),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      viewModel.disposeListener();
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                              ChangeNotifierProvider(
+                                create:
+                                    (_) =>
+                                    BluetoothViewModel(
+                                      bluetoothServiceApp:
                                       Provider.of<BluetoothServiceApp>(
                                         context,
                                         listen: true,
                                       ),
-                                ),
-                            child: const HomepageView(),
-                          ),
-                    ),
-                  );
-                },
-                child: const Text("Ja"),
+                                    ),
+                                child: const HomepageView(),
+                              ),
+                        ),
+                      );
+                    },
+                    child: const Text("Ja"),
+                  ),
+                ],
               ),
-            ],
-          ),
-    );
+        );
 
     return WillPopScope(
       onWillPop: () async {
@@ -138,9 +136,13 @@ class _PostureViewState extends State<PostureView> {
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
                   child: Text(
-                    "Blijf nog voor ${3 - viewModel.correctStopwatch.elapsed.inSeconds}s zo staan!",
+                    "Blijf nog voor ${3 - viewModel.correctStopwatch.elapsed
+                        .inSeconds}s zo staan!",
                     key: const ValueKey("countdownText"),
-                    style: Theme.of(context).textTheme.titleLarge,
+                    style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleLarge,
                   ),
                 ),
 

@@ -4,6 +4,9 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:collection/collection.dart';
 
 class BluetoothServiceApp extends ChangeNotifier{
+
+  bool get isConnected => specificDevice != null && writeCharacteristic != null && notifyCharacteristic != null;
+
   final Map<String, String> labels = {
     "0": "correct posture",
     "1": "inbalance left",
