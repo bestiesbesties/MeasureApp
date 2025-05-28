@@ -21,7 +21,7 @@ class MeasureAwait extends StatelessWidget {
         ),
         const SizedBox(height: 10),
 
-        // if still data is still in progress, show this indicator
+        // FIXME:if still data is still in progress, show this indicator
         CircularProgressIndicator(
           strokeWidth: 2.0,
           backgroundColor: Colors.grey[300],
@@ -54,7 +54,7 @@ class MeasureSend extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Dit zijn de resultaten van de meting",
+          "Resultaten van de meting",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleLarge,
         ),
@@ -95,21 +95,24 @@ class _MeasureViewState extends State<MeasureView> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        return false;
-      },
-      child: Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              !measureDone ? MeasureAwait() : MeasureSend(),
-              const SizedBox(height: 10),
-              RoundButton(
-                name: "Terug naar home",
+    Future openDialog() => showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Terug naar menu"),
+            content: const Text(
+              "Weet je zeker dat je terug wilt gaan naar het menu?",
+            ),
+            actions: [
+              TextButton(
                 onPressed: () {
-                  Navigator.push(
+                  Navigator.pop(context);
+                },
+                child: const Text("Annuleren"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                       builder:
@@ -122,10 +125,31 @@ class _MeasureViewState extends State<MeasureView> {
                                         listen: true,
                                       ),
                                 ),
-                            child: HomepageView(),
+                            child: const HomepageView(),
                           ),
                     ),
                   );
+                },
+                child: const Text("Ja"),
+              ),
+            ],
+          ),
+    );
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              !measureDone ? MeasureAwait() : MeasureSend(),
+              const SizedBox(height: 10),
+              RoundButton(
+                name: "Terug naar menu",
+                onPressed: () {
+                  openDialog();
                 },
               ),
               //FIXME: this button only for simulation purposes

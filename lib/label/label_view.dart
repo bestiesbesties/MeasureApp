@@ -115,7 +115,7 @@ class LabelView extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             RoundButton(
-              name: "Terug naar Home",
+              name: "Terug naar menu",
               onPressed: () {
                 Navigator.pop(context);
               },

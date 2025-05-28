@@ -48,7 +48,7 @@ class HomepageView extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Welkom, zijn jullie klaar om te meten?',
+                            'Welkom, klaar voor de meting?',
                             textAlign: TextAlign.center,
                             style: textTheme.titleLarge,
                           ),

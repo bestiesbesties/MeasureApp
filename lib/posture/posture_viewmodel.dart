@@ -10,6 +10,7 @@ class PostureViewModel extends ChangeNotifier {
     simulatePostureChanges(); // Only during development
   }
 
+  //FIXME: Add more posture responses and images if more lables are added
   final Map<String, List<String>> postureResponse = {
     "0": ["Je staat goed!", "assets/images/feet-icon-correct.png"],
     "1": [

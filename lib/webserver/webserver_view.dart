@@ -75,7 +75,6 @@ class WebserverView extends StatelessWidget {
                               children: [
                                 RoundButton(
                                   name: "Verbinden",
-                                  color: Colors.blue[100],
                                   onPressed: () {
                                     viewModel.tryStatus();
                                   },
@@ -92,7 +91,7 @@ class WebserverView extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             RoundButton(
-              name: "Terug naar Home",
+              name: "Terug naar menu",
               onPressed: () {
                 Navigator.pop(context);
               },

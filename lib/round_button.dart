@@ -13,13 +13,13 @@ class RoundButton extends StatefulWidget {
 
 class _RoundButtonState extends State<RoundButton> {
   late Color _defaultColor;
-  final Color _pressedColor = Color(0xFFD0D9EC);
+  final Color _pressedColor = Color(0xFF1D53BF);
   late Color _currentColor;
 
   @override
   void initState() {
     super.initState();
-    _defaultColor = widget.color ?? Color(0xFFE8EDF8);
+    _defaultColor = widget.color ?? Color(0xFF1D53BF);
     _currentColor = _defaultColor;
   }
 
@@ -65,9 +65,9 @@ class _RoundButtonState extends State<RoundButton> {
             child: Text(
               widget.name,
               style: TextStyle(
-                color: Color(0xFF1F2733),
+                color: Color(0xFFFFFFFF),
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.normal,
               ),
             ),
           ),
