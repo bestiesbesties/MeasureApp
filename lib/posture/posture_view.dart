@@ -31,11 +31,9 @@ class _PostureViewState extends State<PostureView> {
     final size = MediaQuery.of(context).size;
     final double imageSize =
         (size.width > size.height ? size.height : size.width) * 0.7;
-
     //FIXME: uncomment this in deployment to use bluetooth connection
-    final bluetooth = Provider.of<BluetoothViewModel>(context);
-    if (bluetooth.connectionState == "Failed" ||
-        bluetooth.connectionState == "Disconnected") {
+    final bluetoothServiceApp = Provider.of<BluetoothServiceApp>(context);
+    if (false) {
       return Scaffold(
         body: Center(
           child: Column(
@@ -92,6 +90,7 @@ class _PostureViewState extends State<PostureView> {
               ),
               TextButton(
                 onPressed: () {
+                  viewModel.disposeListener();
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
