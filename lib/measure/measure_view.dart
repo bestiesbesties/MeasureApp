@@ -15,7 +15,7 @@ class MeasureAwait extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
-          "Blijf even staan, de meting wordt uitgevoerd",
+          "Blijf even staan, de data wordt verrwerkt...",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.titleLarge,
         ),
@@ -95,6 +95,7 @@ class _MeasureViewState extends State<MeasureView> {
 
   @override
   Widget build(BuildContext context) {
+    //Funciton show dialog to confirm navigation back to the menu
     Future openDialog() => showDialog(
       context: context,
       builder:

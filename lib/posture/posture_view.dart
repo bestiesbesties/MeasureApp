@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:wonder/bluetooth/bluetooth_service.dart';
 import 'package:wonder/bluetooth/bluetooth_view.dart';
+import 'package:wonder/homepage/homepage.dart';
 import 'package:wonder/measure/measure_view.dart';
 import 'package:wonder/posture/posture_viewmodel.dart';
 import 'package:wonder/bluetooth/bluetooth_viewmodel.dart';
@@ -15,45 +16,45 @@ class PostureView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //FIXME: uncomment this in deployment to use bluetooth connection
-    final bluetooth = Provider.of<BluetoothViewModel>(context);
-    if (bluetooth.connectionState == "Failed"||bluetooth.connectionState == "Disconnected") {
-      return Scaffold(
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Geen verbinding met maat."),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  RoundButton(
-                    name: "Maak verbinding",
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => ChangeNotifierProvider(
-                            create:
-                                (_) => BluetoothViewModel(
-                              bluetoothServiceApp:
-                              Provider.of<
-                                  BluetoothServiceApp
-                              >(context, listen: true),
-                            ),
-                            child: BluetoothView(),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      );
-    }
+    // final bluetooth = Provider.of<BluetoothViewModel>(context);
+    // if (bluetooth.connectionState == "Failed"||bluetooth.connectionState == "Disconnected") {
+    //   return Scaffold(
+    //     body: Center(
+    //       child: Column(
+    //         mainAxisAlignment: MainAxisAlignment.center,
+    //         children: [
+    //           Text("Geen verbinding met mat."),
+    //           Row(
+    //             mainAxisSize: MainAxisSize.min,
+    //             children: [
+    //               RoundButton(
+    //                 name: "Maak verbinding",
+    //                 onPressed: () {
+    //                   Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                       builder:
+    //                           (context) => ChangeNotifierProvider(
+    //                         create:
+    //                             (_) => BluetoothViewModel(
+    //                           bluetoothServiceApp:
+    //                           Provider.of<
+    //                               BluetoothServiceApp
+    //                           >(context, listen: true),
+    //                         ),
+    //                         child: BluetoothView(),
+    //                       ),
+    //                     ),
+    //                   );
+    //                 },
+    //               ),
+    //             ],
+    //           ),
+    //         ],
+    //       ),
+    //     ),
+    //   );
+    // }
 
     // Precache all images before showing the posture screen
     return FutureBuilder(
@@ -81,6 +82,7 @@ class PostureView extends StatelessWidget {
     );
   }
 
+  //FIXME: add assets if needed
   Future<void> _precacheAllImages(BuildContext context) async {
     const imagePaths = [
       "assets/images/feet-icon-correct.png",
@@ -107,6 +109,48 @@ class _PostureScreen extends StatelessWidget {
     final double imageSize =
         (size.width > size.height ? size.height : size.width) * 0.7;
 
+    //Funciton show dialog to confirm navigation back to the menu
+    Future openDialog() => showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+        title: const Text("Terug naar menu"),
+        content: const Text(
+          "Weet je zeker dat je terug wilt gaan naar het menu?",
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Annuleren"),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => ChangeNotifierProvider(
+                    create:
+                        (_) => BluetoothViewModel(
+                      bluetoothServiceApp:
+                      Provider.of<BluetoothServiceApp>(
+                        context,
+                        listen: true,
+                      ),
+                    ),
+                    child: const HomepageView(),
+                  ),
+                ),
+              );
+            },
+            child: const Text("Ja"),
+          ),
+        ],
+      ),
+    );
+
     return WillPopScope(
       onWillPop: () async => false,
       child: Scaffold(
@@ -115,7 +159,7 @@ class _PostureScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
+                duration: const Duration(milliseconds: 350),
                 transitionBuilder: (child, animation) {
                   return FadeTransition(opacity: animation, child: child);
                 },
@@ -137,7 +181,7 @@ class _PostureScreen extends StatelessWidget {
               ),
 
               AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
+                duration: const Duration(milliseconds: 550),
                 child:
                     viewModel.isCountingDown
                         ? Text(
@@ -150,6 +194,12 @@ class _PostureScreen extends StatelessWidget {
                           height:
                               28, // Adjust to match height of the text above
                         ),
+              ),
+              RoundButton(
+                name: "Terug naar menu",
+                onPressed: () {
+                  openDialog();
+                },
               ),
             ],
           ),
