@@ -1,58 +1,65 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart';
+import 'dart:convert';
+import 'package:http/http.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+import 'dart:math';
+import 'dart:async';
 
-// void main() {
-//   WebserverService webserverService = WebserverService();
-//   webserverService.sendData(values: [
-//     0.483, 0.027, 0.762, 0.138, 0.611, 0.905, 0.044, 0.316, 0.859, 0.725,
-//     0.599, 0.173, 0.938, 0.287, 0.406, 0.687, 0.350, 0.092, 0.781, 0.219,
-//     0.660, 0.017, 0.513, 0.118, 0.999, 0.230, 0.804, 0.061, 0.449, 0.674
-//   ]);
-// }
-
-class WebserverService extends ChangeNotifier{
-  final String webserverUriString = "http://145.24.223.80:8080/predict";
+class  WebserverService extends ChangeNotifier{
+  final String webserverUriString = "//145.24.223.80:8080";
   bool isConnected = false;
   Map<String, dynamic>? lastKnownStatus;
+  Socket? socket;
 
-  Future<String> sendData({required List<dynamic> values, required String target}) async {
-  try {
-      final response = await post(
-        Uri.parse(webserverUriString),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          "values": values,
-          "target" : target
-        }),
-      );
-      if (response.statusCode == 201) { // HTTP 201 (Created)
-        print('WebserverViewModel: Succes on ${response.statusCode}, ${response.headers}, ${response.body}');
-        return jsonDecode(response.body)["prediction"];
+  // String? lastKnownPrediction;
 
-      } else {
-        print('WebserverViewModel: Error on: ${response.statusCode}, ${response.headers}, ${response.body}');
-        return "";
+  Timer? randomTimer;
 
-      }
-    } catch (e) {
-      print("WebserverService: Error in checkStatus:$e");
-      return "";
-    }
+  void connectToSocket() {
+    print("Connecting...");
 
+    socket = io("http:$webserverUriString", <String, dynamic>{
+      "transports": ["websocket"],
+      "autoConnect": false,
+    });
+
+    socket!.connect();
+
+    socket!.on('connect', (_) {
+      print('Connected to backend');
+    });
   }
+
+  void sendMessage(String event, Map<String, dynamic> data) {
+    print("WebserverService: Sending message: $data");
+    socket!.emit(event, data);
+  }
+  //
+  // void sendRandomValues() {
+  //   if (randomTimer != null && randomTimer!.isActive) return;
+  //
+  //   final random = Random();
+  //   randomTimer = Timer.periodic(Duration(milliseconds:500), (timer) {
+  //     List<int> values = List.generate(210, (_) => random.nextInt(1024));
+  //     // print("values $values");
+  //     sendMessage("inference", <String, dynamic>{"values": values});
+  //   });
+  // }
 
   Future<bool> checkStatus() async {
     try {
       final response = await get(
-        Uri.parse("http://145.24.223.80:8080/status"),
+        Uri.parse("http:$webserverUriString/"),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) { // HTTP 200 (OK)
         lastKnownStatus = jsonDecode(response.body);
         print('WebserverViewModel: Succes on ${response.statusCode}, ${response.headers}, ${response.body}');
         return true;
-        
+
       } else {
         print('WebserverViewModel: Error on: ${response.statusCode}, ${response.headers}, ${response.body}');
         return false;
@@ -64,5 +71,3 @@ class WebserverService extends ChangeNotifier{
     }
   }
 }
-
-

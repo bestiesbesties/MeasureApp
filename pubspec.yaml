@@ -21,6 +21,8 @@ dependencies:
   http: ^0.13.6
   ##**Note added nullsafety module
   collection: ^1.19.1
+  ##**Note added socket
+  socket_io_client: ^2.0.0
   
 dev_dependencies:
   flutter_test:

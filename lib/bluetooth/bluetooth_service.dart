@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:collection/collection.dart';
@@ -11,6 +12,8 @@ class BluetoothServiceApp extends ChangeNotifier{
     "3": "on toes",
     "4": "wrong foot position",
   };
+
+  DateTime lastWriteTime = DateTime.fromMillisecondsSinceEpoch(0);
 
   final int _seconds = 5;
 
@@ -26,14 +29,14 @@ class BluetoothServiceApp extends ChangeNotifier{
   BluetoothCharacteristic? writeCharacteristic;
   BluetoothCharacteristic? notifyCharacteristic;
   StreamSubscription<List<int>>? notifyCharacteristicSubscribtion;
-  final String _specificAdvname = "MeasureMates";
-  final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
-  final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
-  final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
-  // final String _specificAdvname = "DZ Meetmat";
-  // final String _specificServiceID = "1818";
-  // final String _specificCharacteristicNotifyID = "2A63";
-  // final String _specificCharacteristicWriteID = "2A66";
+  // final String _specificAdvname = "MeasureMates";
+  // final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+  // final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
+  // final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+  final String _specificAdvname = "DZ Meetmat";
+  final String _specificServiceID = "1818";
+  final String _specificCharacteristicNotifyID = "2A63";
+  final String _specificCharacteristicWriteID = "2A66";
 
   Future<void> mainConnector() async {
 
@@ -59,7 +62,7 @@ class BluetoothServiceApp extends ChangeNotifier{
 
           if (readFound && notifyFound) {
             writeToDevice("CONNECTED");
-            writeToDevice("START");
+            // writeToDevice("START");
 
             print("\t\t\t\tmainConnector:- Ready, should try to open listeners");
             // await notifyCharacteristic!.setNotifyValue(true);
@@ -226,16 +229,42 @@ class BluetoothServiceApp extends ChangeNotifier{
     }
   }
 
+  void rateLimitedWriteToDevice(String text) async {
+    final now = DateTime.now();
+    final elapsed = now.difference(lastWriteTime).inMilliseconds;
+
+    print("\t\t\t\tBluetoothService: Check rate elapsed: $elapsed");
+    if (elapsed < 3000) {
+      print("\t\t\t\tBluetoothService: Rate limited waiting");
+      await (Future.delayed(Duration(milliseconds: 3000 - elapsed)));
+    }
+    writeToDevice(text);
+    lastWriteTime = now;
+  }
+
   Future<void> writeToDevice(String text) async{
     List<int> textBytes = text.codeUnits;
-    print("\t\t\t\tBluetoothViewModel: Sending data to characteristic: $textBytes");
+    print("\t\t\t\tBluetoothService: Sending data to characteristic: $textBytes");
     await writeCharacteristic!.write(textBytes, withoutResponse: false);
   }
 
+  List<dynamic> valuesFromFloatsAsBytes(List<int> myList)  {
+    try {
+      final byteData = ByteData.sublistView(Uint8List.fromList(myList));
+
+      final weight = byteData.getFloat32(1, Endian.little);
+      final length = byteData.getFloat32(6, Endian.little);
+
+      print("\t\t\t\tBluetoothService: Weight & length: ${[weight.toStringAsFixed(2), length.toStringAsFixed(2)]}");
+      return [weight, length];
+    } catch (e) {
+      print("\t\t\t\tBluetoothService: Error in valuesFromFloatsAsBytes: $e");
+      return [-1, -1];
+    }
+  }
 
   List<dynamic> decimalChanger(List<int> value) {
     final foot = String.fromCharCode(value[0]);
-
     final values = <int>[];
 
     // TODO length delen door 2

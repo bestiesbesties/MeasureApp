@@ -29,7 +29,9 @@ class LabelViewModel extends ChangeNotifier {
         if (buffer.length == 2) {
           final flatList = buffer.expand((x) => x).toList();
           print("\t\t\t\tLabelViewModel: sending flattend buffer");
-          webserverService.sendData(values: flatList, target: dynamicTarget);
+
+          // webserverService.sendData(values: flatList, target: dynamicTarget);
+
           buffer.clear();
         }
 
