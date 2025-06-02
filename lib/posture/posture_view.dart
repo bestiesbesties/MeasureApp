@@ -32,8 +32,6 @@ class _PostureViewState extends State<PostureView> {
     final size = MediaQuery.of(context).size;
     final double imageSize =
         (size.width > size.height ? size.height : size.width) * 0.7;
-    //FIXME: uncomment this in deployment to use bluetooth connection
-    // final bluetoothServiceApp = Provider.of<BluetoothServiceApp>(context);
     if (!viewModel.isConnected) {
       return Scaffold(
         body: Center(
@@ -131,7 +129,7 @@ class _PostureViewState extends State<PostureView> {
                 height: imageSize, // same height for both states
                 child: Center(
                   child:
-                  viewModel.message == "Onbekende houding"
+                  viewModel.message == ""
                       ? Transform.scale(
                     scale: 1.8,
                     child: const CircularProgressIndicator(
@@ -150,24 +148,30 @@ class _PostureViewState extends State<PostureView> {
                 ),
               ),
 
-              const SizedBox(height: 20),
-
               const SizedBox(height: 30),
               Text(viewModel.message),
 
               const SizedBox(height: 15),
               if (viewModel.isTrackingCorrect)
                 AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 250),
-                  child: Text(
-                    "Blijf nog voor ${3 - viewModel.correctStopwatch.elapsed.inSeconds}s zo staan!",
-                    key: const ValueKey("countdownText"),
-                    style: Theme.of(context).textTheme.titleLarge,
+                  duration: const Duration(milliseconds: 50),
+                  child: ValueListenableBuilder<Stopwatch>(
+                    valueListenable: viewModel.correctStopwatch,
+                    builder: (context, model, _) {
+                      return Text("Blijf nog voor ${6 - viewModel.correctStopwatch.value.elapsed.inSeconds}s zo staan!");
+                    },
                   ),
                 ),
 
+                //   Text(
+                //     "Blijf nog voor ${5 - viewModel.correctStopwatch.value.elapsed.inSeconds}s zo staan!",
+                //     key: const ValueKey("countdownText"),
+                //     style: Theme.of(context).textTheme.titleLarge,
+                //   ),
+                // ),
+
               if (viewModel.isCorrectIndefinite)
-                MeasureView(measurment: viewModel.measurementIndefinite,),
+                MeasureView(measurment: viewModel.measurementIndefinite),
 
               // Text("Meting is succesvol afgerond"),
               const SizedBox(height: 30),

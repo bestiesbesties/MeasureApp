@@ -14,14 +14,11 @@ class BluetoothServiceApp extends ChangeNotifier{
   };
 
   DateTime lastWriteTime = DateTime.fromMillisecondsSinceEpoch(0);
-
   final int _seconds = 5;
-
   Duration get duration => Duration(seconds:_seconds);
-
   final List<ScanResult> _scanResults = [];
-
   List<ScanResult> get scanResults => _scanResults;
+  bool adapterReady = false;
 
   String dynamicLabel = "";
   BluetoothDevice? specificDevice;
@@ -29,19 +26,26 @@ class BluetoothServiceApp extends ChangeNotifier{
   BluetoothCharacteristic? writeCharacteristic;
   BluetoothCharacteristic? notifyCharacteristic;
   StreamSubscription<List<int>>? notifyCharacteristicSubscribtion;
-  // final String _specificAdvname = "MeasureMates";
-  // final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
-  // final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
-  // final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
-  final String _specificAdvname = "DZ Meetmat";
-  final String _specificServiceID = "1818";
-  final String _specificCharacteristicNotifyID = "2A63";
-  final String _specificCharacteristicWriteID = "2A66";
+  final String _specificAdvname = "MeasureMates";
+  final String _specificServiceID = "6E400001-B5A3-F393-E0A9-E50E24DCCA9E";
+  final String _specificCharacteristicNotifyID = "6E400003-B5A3-F393-E0A9-E50E24DCCA9E";
+  final String _specificCharacteristicWriteID = "6E400002-B5A3-F393-E0A9-E50E24DCCA9E";
+  // final String _specificAdvname = "DZ Meetmat";
+  // final String _specificServiceID = "1818";
+  // final String _specificCharacteristicNotifyID = "2A63";
+  // final String _specificCharacteristicWriteID = "2A66";
 
   Future<void> mainConnector() async {
 
-    await FlutterBluePlus.adapterState.firstWhere((state) =>
-    state == BluetoothAdapterState.on);
+    while (!adapterReady) {
+      final state = await FlutterBluePlus.adapterState.first;
+      if (state == BluetoothAdapterState.on) {
+        adapterReady = true;
+        await Future.delayed(Duration(milliseconds: 200));
+      } else {
+        await Future.delayed(Duration(milliseconds: 2000));
+      }
+    }
 
     bool foundDevice = await findBySpecificAdvname();
     print("\t\t\t\tmainConnector:- foundDevice: $foundDevice");
@@ -98,8 +102,7 @@ class BluetoothServiceApp extends ChangeNotifier{
       bool activeCondition;
       print("\t\t\t\tBluetoothViewModel: Starting scanning for $_seconds seconds");
       await FlutterBluePlus.startScan(timeout: duration);
-
-      FlutterBluePlus.startScan(timeout: duration);
+      // FlutterBluePlus.startScan(timeout: duration);
       FlutterBluePlus.scanResults.listen((results) {
         _scanResults.clear();
         _scanResults.addAll(results);
@@ -229,22 +232,9 @@ class BluetoothServiceApp extends ChangeNotifier{
     }
   }
 
-  void rateLimitedWriteToDevice(String text) async {
-    final now = DateTime.now();
-    final elapsed = now.difference(lastWriteTime).inMilliseconds;
-
-    print("\t\t\t\tBluetoothService: Check rate elapsed: $elapsed");
-    if (elapsed < 3000) {
-      print("\t\t\t\tBluetoothService: Rate limited waiting");
-      await (Future.delayed(Duration(milliseconds: 3000 - elapsed)));
-    }
-    writeToDevice(text);
-    lastWriteTime = now;
-  }
-
   Future<void> writeToDevice(String text) async{
+    print("\t\t\t\tBluetoothService: Writing to characteristic: $text");
     List<int> textBytes = text.codeUnits;
-    print("\t\t\t\tBluetoothService: Sending data to characteristic: $textBytes");
     await writeCharacteristic!.write(textBytes, withoutResponse: false);
   }
 

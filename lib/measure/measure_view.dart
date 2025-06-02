@@ -29,7 +29,7 @@ class MeasureView extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         Text(
-          "Gewicht: ${measurment[0]} cm\n Lengte: ${measurment[1]} kg\n",
+          "Gewicht: ${measurment[0].toStringAsFixed(1)} kg\n Lengte: ${measurment[1].toStringAsFixed(1)} cm\n",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyLarge,
         ),

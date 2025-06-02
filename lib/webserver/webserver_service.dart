@@ -14,8 +14,6 @@ class  WebserverService extends ChangeNotifier{
   Map<String, dynamic>? lastKnownStatus;
   Socket? socket;
 
-  // String? lastKnownPrediction;
-
   Timer? randomTimer;
 
   void connectToSocket() {

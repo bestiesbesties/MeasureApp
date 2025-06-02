@@ -12,9 +12,9 @@ class PostureViewModel extends ChangeNotifier {
     required this.webserverService,
   });
 
-  final Stopwatch correctStopwatch = Stopwatch();
+  // final Stopwatch correctStopwatch = Stopwatch();
   bool isTrackingCorrect = false;
-  int correctSeconds = 0;
+  final ValueNotifier<Stopwatch> correctStopwatch = ValueNotifier(Stopwatch());
   bool isCorrectIndefinite = false;
   List<dynamic> measurementIndefinite = [-1,-1];
 
@@ -23,17 +23,12 @@ class PostureViewModel extends ChangeNotifier {
   List<List<dynamic>> buffer = [];
   String lastKnownPrediction = "";
 
-  // bool get isConnected =>
-  //     bluetoothServiceApp.specificDevice != null &&
-  //         bluetoothServiceApp.writeCharacteristic != null &&
-  //         bluetoothServiceApp.notifyCharacteristic != null;
-
   bool get isConnected =>
       bluetoothServiceApp.specificDevice?.isConnected ?? false;
 
   String get message {
     String val =
-        predictionMapping[lastKnownPrediction]?[0] ?? "Onbekende houding";
+        predictionMapping[lastKnownPrediction]?[0] ?? "";
     // print("\t\t\t\tPostureViewModel: Gotten message as : $val");
     return val;
   }
@@ -72,7 +67,6 @@ class PostureViewModel extends ChangeNotifier {
       "assets/images/feet-icon-wrong-all.png",
     ],
   };
-
 
   void mainMeasurer() async {
     setEventHandler();
@@ -124,10 +118,6 @@ class PostureViewModel extends ChangeNotifier {
           if (buffer.length == 2) {
             final flatList = buffer.expand((x) => x).toList();
             print("\t\t\t\tPostureViewModel: sending flattened buffer");
-
-            // lastKnownPrediction = await webserverService.sendData(values: flatList, target: dynamicTarget);
-            // notifyListeners();
-
             webserverService.sendMessage("inference", <String, dynamic>{
               "values" : flatList
             });
@@ -138,39 +128,38 @@ class PostureViewModel extends ChangeNotifier {
               print("\t\t\t\tPostureViewModel: Active posture is correct");
               if (!isTrackingCorrect) {
                 print("\t\t\t\tPostureViewModel: Started tracking time");
-                correctStopwatch.start();
+                correctStopwatch.value.start();
                 bluetoothServiceApp.writeToDevice("START_TIMER");
                 print("\t\t\t\tPostureViewModel: Good & requesting new block");
-                bluetoothServiceApp.rateLimitedWriteToDevice("APPROVED");
+                bluetoothServiceApp.writeToDevice("APPROVED");
                 isTrackingCorrect = true;
                 notifyListeners();
               } else {
-                correctSeconds = correctStopwatch.elapsed.inSeconds;
-                print("\t\t\t\tPostureViewModel: Tracked time: $correctSeconds");
-                if (correctSeconds > 3) {
+                // correctSeconds.value = correctStopwatch.elapsed.inSeconds;
+                // notifyListeners();
+                // print("\t\t\t\tPostureViewModel: Tracked time: ${correctSeconds.value}");
+                if (correctStopwatch.value.elapsed.inSeconds > 5) {
                   print("\t\t\t\tPostureViewModel: Recent correct postions succesfully closed measurement ");
                   isCorrectIndefinite = true;
                   isTrackingCorrect = false;
                   bluetoothServiceApp.writeToDevice("FINISH_TIMER");
-                  correctStopwatch.reset();
-                  correctStopwatch.stop();
+                  correctStopwatch.value.reset();
+                  correctStopwatch.value.stop();
                   notifyListeners();
                   } else {
                     print("\t\t\t\tPostureViewModel: Good & requesting new block");
-                    bluetoothServiceApp.rateLimitedWriteToDevice("APPROVED");
+                    bluetoothServiceApp.writeToDevice("APPROVED");
                 }
               }
-              // print("\t\t\t\tPostureViewModel: Good & requesting new block");
-              // bluetoothServiceApp.rateLimitedWriteToDevice("APPROVED");
             } else {
               bluetoothServiceApp.writeToDevice("CANCEL_TIMER");
               isTrackingCorrect = false;
-              correctStopwatch.reset();
-              correctStopwatch.stop();
-              correctSeconds = 0;
+              correctStopwatch.value.reset();
+              correctStopwatch.value.stop();
+              // correctSeconds.value = 0;
               notifyListeners();
               print("\t\t\t\tPostureViewModel: Bad & requesting new block");
-              bluetoothServiceApp.rateLimitedWriteToDevice("DISAPPROVED");
+              bluetoothServiceApp.writeToDevice("DISAPPROVED");
             }
             print("\t\t\t\tPostureViewModel: Clearing buffer");
             buffer.clear();
@@ -178,6 +167,7 @@ class PostureViewModel extends ChangeNotifier {
             print("\t\t\t\tPostureViewModel: Error Blocked buffer size Too Large: ${buffer.length}");
             buffer.clear();
           }
+          notifyListeners();
         }
       } catch (e) {
         print("\t\t\t\tPostureViewModel: Error at setListener: $e");
