@@ -28,9 +28,7 @@ class _PostureViewState extends State<PostureView> {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<PostureViewModel>(context);
-    final size = MediaQuery
-        .of(context)
-        .size;
+    final size = MediaQuery.of(context).size;
     final double imageSize =
         (size.width > size.height ? size.height : size.width) * 0.7;
     //FIXME: uncomment this in deployment to use bluetooth connection
@@ -50,10 +48,10 @@ class _PostureViewState extends State<PostureView> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ChangeNotifierProvider(
-                            create: (_) =>
-                                BluetoothViewModel(
+                      builder:
+                          (context) => ChangeNotifierProvider(
+                            create:
+                                (_) => BluetoothViewModel(
                                   bluetoothServiceApp: bluetoothServiceApp,
                                 ),
                             child: const BluetoothView(),
@@ -67,51 +65,47 @@ class _PostureViewState extends State<PostureView> {
         ),
       );
     }
-    Future openDialog() =>
-        showDialog(
-          context: context,
-          builder:
-              (context) =>
-              AlertDialog(
-                title: const Text("Terug naar menu"),
-                content: const Text(
-                  "Weet je zeker dat je terug wilt gaan naar het menu?",
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Annuleren"),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      viewModel.disposeListener();
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                              ChangeNotifierProvider(
-                                create:
-                                    (_) =>
-                                    BluetoothViewModel(
-                                      bluetoothServiceApp:
+    Future openDialog() => showDialog(
+      context: context,
+      builder:
+          (context) => AlertDialog(
+            title: const Text("Terug naar menu"),
+            content: const Text(
+              "Weet je zeker dat je terug wilt gaan naar het menu?",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("Annuleren"),
+              ),
+              TextButton(
+                onPressed: () {
+                  viewModel.disposeListener();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => ChangeNotifierProvider(
+                            create:
+                                (_) => BluetoothViewModel(
+                                  bluetoothServiceApp:
                                       Provider.of<BluetoothServiceApp>(
                                         context,
                                         listen: true,
                                       ),
-                                    ),
-                                child: const HomepageView(),
-                              ),
-                        ),
-                      );
-                    },
-                    child: const Text("Ja"),
-                  ),
-                ],
+                                ),
+                            child: const HomepageView(),
+                          ),
+                    ),
+                  );
+                },
+                child: const Text("Ja"),
               ),
-        );
+            ],
+          ),
+    );
 
     return WillPopScope(
       onWillPop: () async {
@@ -123,12 +117,30 @@ class _PostureViewState extends State<PostureView> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                viewModel.imagePath,
-                width: imageSize,
-                height: imageSize,
+              SizedBox(
+                height: imageSize, // same height for both states
+                child: Center(
+                  child:
+                      viewModel.message == "Onbekende houding"
+                          ? Transform.scale(
+                            scale: 1.8,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 4.0,
+                              backgroundColor: Color(0xFFECECEC),
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Color(0xFF5382DE),
+                              ),
+                            ),
+                          )
+                          : Image.asset(
+                            viewModel.imagePath,
+                            width: imageSize,
+                            height: imageSize,
+                          ),
+                ),
               ),
-              const SizedBox(height: 30),
+
+              const SizedBox(height: 20),
               Text(viewModel.message),
 
               const SizedBox(height: 15),
@@ -136,13 +148,10 @@ class _PostureViewState extends State<PostureView> {
                 AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
                   child: Text(
-                    "Blijf nog voor ${3 - viewModel.correctStopwatch.elapsed
+                    "Blijf nog voor ${3 - viewModel.correctStopwatch.elapsed //FIXME: change number if needed
                         .inSeconds}s zo staan!",
                     key: const ValueKey("countdownText"),
-                    style: Theme
-                        .of(context)
-                        .textTheme
-                        .titleLarge,
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
 
