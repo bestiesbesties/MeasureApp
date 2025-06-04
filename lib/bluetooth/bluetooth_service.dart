@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:collection/collection.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class BluetoothServiceApp extends ChangeNotifier{
   final Map<String, String> labels = {
@@ -34,6 +35,14 @@ class BluetoothServiceApp extends ChangeNotifier{
   // final String _specificServiceID = "1818";
   // final String _specificCharacteristicNotifyID = "2A63";
   // final String _specificCharacteristicWriteID = "2A66";
+
+
+  Future<void> checkPermissions() async {
+    await Permission.bluetooth.request();
+    await Permission.bluetoothScan.request();
+    await Permission.bluetoothConnect.request();
+    await Permission.locationWhenInUse.request();
+  }
 
   Future<void> mainConnector() async {
 

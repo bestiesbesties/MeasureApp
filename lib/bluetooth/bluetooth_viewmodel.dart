@@ -10,6 +10,7 @@ class BluetoothViewModel extends ChangeNotifier {
 
   void tryConnecting() async {
     try {
+      bluetoothServiceApp.checkPermissions();
       connectionState = "Connecting";
       notifyListeners();
       await bluetoothServiceApp.mainConnector();
