@@ -41,28 +41,20 @@ Currently, the app is distributed as a standard mobile application:
    flutter run
    ```
 
-> For end users: The final version of the app will be available via a mobile download link or app store listing. *(Coming soon!)*
+> For end users: The final version of the app will be available via a mobile download link or app store listing. *(Not available yet!)*
 
-## 📸 Screenshots
+## 📸 Wireframes
 
-Coming soon!
+[wireframes](https://github.com/user-attachments/assets/55b86d42-cde1-41f3-9ed1-ba8b0f716401)
 
-## 🎥 Demo
 
-A demo video will be available here. *(Coming soon!)*
 
 ## 🛠 Tech Stack
 
 - Flutter
+- Bluethooth plus package
 - Dart
 - Android Studio
 - Sensor & Laser integration with external hardware
 - Cloud database (e.g., Firebase, Supabase, or custom backend)
 
-## 📄 License
-
-Add your license here (e.g., MIT, Apache 2.0, etc.)
-
-## 🤝 Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
