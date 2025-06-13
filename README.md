@@ -45,14 +45,17 @@ Currently, the app is distributed as a standard mobile application:
 
 ## 📸 Wireframes
 
-[wireframes](https://github.com/user-attachments/assets/55b86d42-cde1-41f3-9ed1-ba8b0f716401)
+[Link to see wireframes](https://github.com/user-attachments/assets/55b86d42-cde1-41f3-9ed1-ba8b0f716401)
+
+Read more about the design and recommendation for further development please download 
+[UI/UX design document in Dutch](https://github.com/bestiesbesties/MeasureApp/blob/main/UI_UX_ontwerp_document.docx)
 
 
 
 ## 🛠 Tech Stack
 
 - Flutter
-- Bluethooth plus package
+- Bluetooth plus package
 - Dart
 - Android Studio
 - Sensor & Laser integration with external hardware
